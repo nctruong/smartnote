@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Post, Req, Res, UseGuards} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {JwtAuthGuard} from "./jwt/jwt.guard";
 
@@ -14,6 +14,13 @@ export class AuthController {
     @Post('login')
     login(@Body() body: { email: string; password: string }) {
         return this.auth.login(body.email, body.password);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('logout')
+    logout(@Res() res: Response) {
+        // Just return success — actual logout handled client-side
+        return res.status(200).json({ message: 'Logged out' })
     }
 
     @UseGuards(JwtAuthGuard)
