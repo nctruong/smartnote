@@ -14,10 +14,92 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  MEMBER
+  GUEST
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
+  id        BigInt   @id @default(autoincrement()) // primary key
   email     String   @unique
   password  String
-  name      String?
+  role      Role     @default(MEMBER) // 👈 enum field
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  companyId BigInt
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  bunkerTankers    BunkerTanker[]
+  receivingVessels ReceivingVessel[]
+}
+
+model Company {
+  id        BigInt   @id @default(autoincrement()) // primary key
+  name      String
+  uen       String
+  companyId BigInt? // self-reference field
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Optional: self-referencing relation (if `companyId` refers to parent company)
+  parent   Company?  @relation("ParentCompany", fields: [companyId], references: [id])
+  children Company[] @relation("ParentCompany")
+
+  bunkerTankers    BunkerTanker[]
+  receivingVessels ReceivingVessel[]
+  users User[]
+}
+
+model BunkerTanker {
+  id        BigInt   @id @default(autoincrement()) // primary key
+  imo       String
+  name      String
+  s3Key     String
+  sbNo      String
+  serialNo  String
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId BigInt
+  userId    BigInt
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  sealsChecklists SealsChecklist[]
+}
+
+model ReceivingVessel {
+  id        BigInt   @id @default(autoincrement())
+  imo       String
+  name      String
+  s3Key     String
+  sbNo      String
+  serialNo  String
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId BigInt
+  userId    BigInt
+
+  company Company @relation(fields: [companyId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model SealsChecklist {
+  id        BigInt   @id @default(autoincrement())
+  name      String
+  items     Json
+  synced    Boolean  @default(false)
+  xlsxData  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bunkerTankerId BigInt
+  bunkerTanker   BunkerTanker @relation(fields: [bunkerTankerId], references: [id])
 }
