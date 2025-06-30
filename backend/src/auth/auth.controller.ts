@@ -1,14 +1,16 @@
 import {Body, Controller, Get, Post, Req, Res, UseGuards} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {JwtAuthGuard} from "./jwt/jwt.guard";
+import { Response } from 'express';
+
 
 @Controller('auth')
 export class AuthController {
     constructor(private auth: AuthService) {}
 
     @Post('register')
-    register(@Body() body: { email: string; password: string; name?: string }) {
-        return this.auth.register(body.email, body.password, body.name);
+    register(@Body() body: { email: string; password: string; companyId: number }) {
+        return this.auth.register(body.email, body.password, body.companyId);
     }
 
     @Post('login')
