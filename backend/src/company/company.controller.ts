@@ -11,6 +11,7 @@ import {
     ParseIntPipe,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
+import {Company} from "../../generated/prisma";
 
 @Controller('companies')
 export class CompanyController {
@@ -29,7 +30,7 @@ export class CompanyController {
     }
 
     @Post()
-    async create(@Body() data: { name: string; uen: string }) {
+    async create(@Body() data: Company) {
         return this.companyService.create(data);
     }
 
@@ -45,4 +46,5 @@ export class CompanyController {
     async remove(@Param('id', ParseIntPipe) id: number) {
         return this.companyService.remove(id);
     }
+
 }
