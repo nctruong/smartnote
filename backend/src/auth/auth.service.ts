@@ -18,7 +18,7 @@ export class AuthService {
         },
       },
     });
-    return { id: user.id, email: user.email };
+    return { id: user.id.toString(), email: user.email };
   }
 
   async login(email: string, password: string) {
