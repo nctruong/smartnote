@@ -64,48 +64,55 @@ export default function AdminUsersPage() {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto border rounded">
-                    <table className="min-w-full text-sm">
-                        <thead className="bg-gray-100 text-left">
+                <div className="overflow-x-auto rounded">
+                    <table className="min-w-full table-auto border border-gray-200 shadow-sm rounded-lg text-sm">
+                        <thead className="bg-gray-50 text-gray-700 uppercase text-xs tracking-wider">
                         <tr>
-                            <th className="p-2"><input type="checkbox" /></th>
-                            <th className="p-2">ID</th>
-                            <th className="p-2">Company</th>
-                            <th className="p-2">Email</th>
-                            <th className="p-2">Role</th>
-                            <th className="p-2">Verified</th>
-                            <th className="p-2">Bunker Tanker</th>
-                            <th className="p-2">Vessel</th>
-                            <th className="p-2">IMO</th>
-                            <th className="p-2">Actions</th>
+                            <th className="p-3 text-left"><input type="checkbox" className="accent-blue-500"/></th>
+                            <th className="p-3 text-left">ID</th>
+                            <th className="p-3 text-left">Company</th>
+                            <th className="p-3 text-left">Email</th>
+                            <th className="p-3 text-left">Role</th>
+                            <th className="p-3 text-left">Verified</th>
+                            <th className="p-3 text-left">Bunker Tanker</th>
+                            <th className="p-3 text-left">Vessel</th>
+                            <th className="p-3 text-left">IMO</th>
+                            <th className="p-3 text-left">Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="divide-y divide-gray-200 bg-white">
                         {filteredUsers.map((user) => (
-                            <tr key={user.id} className="border-t">
-                                <td className="p-2"><input type="checkbox" /></td>
-                                <td className="p-2 text-blue-600">{user.id}</td>
-                                <td className="p-2 text-blue-600">{user.company.name}</td>
-                                <td className="p-2">{user.email}</td>
-                                <td className="p-2">{user.role}</td>
-                                <td className="p-2">
-                                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Yes</span>
+                            <tr key={user.id} className="hover:bg-gray-50">
+                                <td className="p-3"><input type="checkbox" className="accent-blue-500"/></td>
+                                <td className="p-3 font-medium text-blue-600">{user.id}</td>
+                                <td className="p-3 text-blue-600">{user.company.name}</td>
+                                <td className="p-3">{user.email}</td>
+                                <td className="p-3">{user.role}</td>
+                                <td className="p-3">
+          <span className="inline-block bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">
+            Yes
+          </span>
                                 </td>
-                                <td className="p-2">{user.bunkerTankers?.map((bunker: BunkerTanker) => bunker.name).join(', ')}</td>
-                                <td className="p-2">{user.vessel}</td>
-                                <td className="p-2">{user.imo}</td>
-                                <td className="p-2 text-blue-600 space-x-2">
-                                    {/*<button>View</button>*/}
-                                    <Link href={`/admin/users/${user.id}/edit`} className="text-blue-600">
+                                <td className="p-3 text-gray-700">
+                                    {user.bunkerTankers?.map((bunker: BunkerTanker) => bunker.name).join(', ')}
+                                </td>
+                                <td className="p-3">{user.vessel}</td>
+                                <td className="p-3">{user.imo}</td>
+                                <td className="p-3 space-x-2 whitespace-nowrap">
+                                    <Link href={`/admin/users/${user.id}/edit`}
+                                          className="text-blue-600 hover:underline">
                                         Edit
                                     </Link>
                                     <button
-                                        className="text-red-600"
                                         onClick={() => handleDelete(user.id)}
+                                        className="text-red-600 hover:underline"
                                     >
                                         Delete
                                     </button>
-                                    <button onClick={() => setInviteEmail(user.email)} className="text-blue-500">
+                                    <button
+                                        onClick={() => setInviteEmail(user.email)}
+                                        className="text-blue-500 hover:underline"
+                                    >
                                         Invite
                                     </button>
                                 </td>
@@ -118,14 +125,14 @@ export default function AdminUsersPage() {
 
             {/* Filter Sidebar */}
             <FilterPanel onFilter={(filters) => {
-                const { email, company } = filters
+                const {email, company} = filters
                 setFilteredUsers(
                     users.filter(user =>
                         (!email || user.email.includes(email)) &&
                         (!company || user.company === company)
                     )
                 )
-            }} />
+            }}/>
             {inviteEmail && (
                 <InviteModal
                     email={inviteEmail}

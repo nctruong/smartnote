@@ -69,37 +69,44 @@ export default function CompaniesPage() {
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                <table className="w-full text-sm border">
-                    <thead>
-                    <tr className="bg-gray-100 text-left">
-                        <th className="p-2 border">ID</th>
-                        <th className="p-2 border">Name</th>
-                        <th className="p-2 border">Created At</th>
-                        <th className="p-2 border">Updated At</th>
-                        <th className="p-2 border">Client</th>
-                        <th className="p-2 border">UEN</th>
-                        <th className="p-2 border">Actions</th>
+                <table className="min-w-full table-auto border border-gray-200 shadow-sm rounded-lg text-sm">
+                    <thead className="bg-gray-50 text-gray-700 uppercase text-xs tracking-wider">
+                    <tr>
+                        <th className="p-3 text-left">ID</th>
+                        <th className="p-3 text-left">Name</th>
+                        <th className="p-3 text-left">Created At</th>
+                        <th className="p-3 text-left">Updated At</th>
+                        <th className="p-3 text-left">Client</th>
+                        <th className="p-3 text-left">UEN</th>
+                        <th className="p-3 text-left">Actions</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-gray-200 bg-white">
                     {filteredCompanies.map(company => (
-                        <tr key={company.id} className="border-t">
-                            <td className="p-2 border">{company.id}</td>
-                            <td className="p-2 border">{company.name}</td>
-                            <td className="p-2 border">{new Date(company.createdAt).toLocaleString()}</td>
-                            <td className="p-2 border">{new Date(company.updatedAt).toLocaleString()}</td>
-                            <td className="p-2 border">
+                        <tr key={company.id} className="hover:bg-gray-50">
+                            <td className="p-3 font-medium text-blue-600">{company.id}</td>
+                            <td className="p-3">{company.name}</td>
+                            <td className="p-3 text-gray-600">{new Date(company.createdAt).toLocaleString()}</td>
+                            <td className="p-3 text-gray-600">{new Date(company.updatedAt).toLocaleString()}</td>
+                            <td className="p-3 text-blue-600">
                                 {company.parent ? (
-                                    <Link href={`/admin/companies/${company.parent.id}`} className="text-blue-600 underline">
+                                    <Link href={`/admin/companies/${company.parent.id}`} className="hover:underline">
                                         {company.parent.name}
                                     </Link>
-                                ) : '-'}
+                                ) : (
+                                    <span className="text-gray-400 italic">—</span>
+                                )}
                             </td>
-                            <td className="p-2 border">{company.uen}</td>
-                            <td className="p-2 border space-x-2">
-                                <Link href={`/admin/companies/${company.id}/edit`} className="text-blue-600 underline">Edit</Link>
+                            <td className="p-3">{company.uen}</td>
+                            <td className="p-3 whitespace-nowrap space-x-3">
+                                <Link
+                                    href={`/admin/companies/${company.id}/edit`}
+                                    className="text-blue-600 hover:underline"
+                                >
+                                    Edit
+                                </Link>
                                 <button
-                                    className="text-red-600"
+                                    className="text-red-600 hover:underline"
                                     onClick={() => handleDelete(company.id)}
                                 >
                                     Delete

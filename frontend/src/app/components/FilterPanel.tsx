@@ -7,7 +7,7 @@ export default function FilterPanel({ onFilter }: { onFilter: (f: any) => void }
     const [company, setCompany] = useState('')
 
     return (
-        <aside className="w-64 border rounded p-4 bg-white">
+        <aside className="w-64 rounded p-4 bg-white">
             <h2 className="text-md font-semibold mb-4">Filters</h2>
             <div className="mb-4">
                 <label className="block text-xs text-gray-500 mb-1">Email</label>
