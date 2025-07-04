@@ -8,7 +8,7 @@ const navItems = [
     { label: 'Users', href: '/admin/users' },
     // { label: 'Activity Logs', href: '/admin/logs' },
     { label: 'Companies', href: '/admin/companies' },
-    { label: 'Receiving Vessel Companies', href: '/admin/vessels' },
+    { label: 'Receiving Vessel', href: '/admin/vessels' },
 ]
 
 export default function AdminSidebar() {

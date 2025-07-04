@@ -1,14 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import axiosClient from "@/lib/axiosClient";
 
 export default function InviteModal({ email, onClose }: { email: string, onClose: () => void }) {
     const [password, setPassword] = useState('')
 
     const handleSend = async () => {
-        await fetch('http://localhost:3001/invite', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        await axiosClient.post('http://localhost:3001/invite', {
             body: JSON.stringify({ email, password }),
         })
 

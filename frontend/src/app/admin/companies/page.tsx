@@ -24,9 +24,8 @@ export default function CompaniesPage() {
     const router = useRouter()
 
     async function fetchCompanies() {
-        const res = await fetch('http://localhost:3001/companies')
-        const data = await res.json()
-        setCompanies(data)
+        const res = await axiosClient.get('http://localhost:3001/companies')
+        setCompanies(res.data)
         setLoading(false)
     }
 

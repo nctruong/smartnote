@@ -40,11 +40,11 @@ export default function AdminUsersPage() {
         const confirm = window.confirm('Are you sure you want to delete this user?')
         if (!confirm) return
 
-        const res = await fetch(`http://localhost:3001/users/${id}`, {
+        const res = await axiosClient.delete(`http://localhost:3001/users/${id}`, {
             method: 'DELETE',
         })
 
-        if (res.ok) {
+        if (res.status === 200) {
             setFilteredUsers(prev => prev.filter(user => user.id !== id))
         } else {
             alert('Failed to delete user.')

@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import axiosClient from "@/lib/axiosClient";
 
 interface User {
     id: number,
@@ -29,10 +30,8 @@ export default function EditUserPage() {
     // Fetch user by ID
     useEffect(() => {
         async function fetchUser() {
-            const res = await fetch(`http://localhost:3001/users/${id}`);
-            const data = await res.json();
-            setUser(data);
-            console.log(`data: ${JSON.stringify(data)}`);
+            const res = await axiosClient.get(`http://localhost:3001/users/${id}`);
+            setUser(res.data);
             setLoading(false);
         }
 
@@ -57,9 +56,7 @@ export default function EditUserPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         console.log(`form: ${JSON.stringify(form)}`)
-        await fetch(`http://localhost:3001/users/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+        await axiosClient.put(`http://localhost:3001/users/${id}`, {
             body: JSON.stringify(form),
         })
 

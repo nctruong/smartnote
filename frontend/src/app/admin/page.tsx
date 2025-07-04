@@ -1,18 +1,7 @@
+import axiosClient from "@/lib/axiosClient";
+
 export default function AdminDashboardPage() {
-    const handleDelete = async (id: string) => {
-        const confirm = window.confirm('Are you sure you want to delete this user?')
-        if (!confirm) return
 
-        const res = await fetch(`http://localhost:3001/users/${id}`, {
-            method: 'DELETE',
-        })
-
-        if (res.ok) {
-            setUsers(prev => prev.filter(user => user.id !== id))
-        } else {
-            alert('Failed to delete user.')
-        }
-    }
     
     return (
         <div>

@@ -6,6 +6,7 @@ import {Roles} from "../auth/jwt/roles.decorator";
 import {Role} from "../auth/jwt/roles.enum";
 
 @Controller('users')
+@Roles(Role.ADMIN)
 export class UsersController {
   constructor(
       private readonly usersService: UsersService,
@@ -16,7 +17,6 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  @Roles(Role.ADMIN)
   @Get()
   async findAll() {
     return this.usersService.findAll()

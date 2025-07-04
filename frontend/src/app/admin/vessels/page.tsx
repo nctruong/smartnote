@@ -36,12 +36,12 @@ export default function ReceivingVesselCompanyPage() {
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-xl font-semibold">Receiving Vessel Companies</h1>
+                <h1 className="text-xl font-semibold">Receiving Vessels</h1>
                 <Link
                     href="/admin/vessels/new"
                     className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
                 >
-                    New Receiving Vessel Company
+                    New Receiving Vessel
                 </Link>
             </div>
 
