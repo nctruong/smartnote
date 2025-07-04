@@ -28,6 +28,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   companyId BigInt
+  invited   Boolean  @default(false)
 
   company Company @relation(fields: [companyId], references: [id])
 
@@ -38,7 +39,7 @@ model User {
 model Company {
   id        BigInt   @id @default(autoincrement()) // primary key
   name      String
-  uen       String
+  uen       String?
   companyId BigInt? // self-reference field
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

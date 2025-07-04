@@ -7,7 +7,6 @@ import EformCard from "@/app/components/EformCard";
 import Pagination from "@/app/components/Pagination";
 
 export default function Home() {
-    const {user, logoutUser} = useAuth()
 
     return (
         <div className="min-h-screen bg-gray-100">

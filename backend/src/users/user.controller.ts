@@ -1,7 +1,9 @@
 import {Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
 import { UsersService } from './users.service';
 import {AuthService} from "../auth/auth.service";
-import {User} from "../../generated/prisma";
+import {$Enums, User} from "../../generated/prisma";
+import {Roles} from "../auth/jwt/roles.decorator";
+import {Role} from "../auth/jwt/roles.enum";
 
 @Controller('users')
 export class UsersController {
@@ -14,6 +16,7 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
+  @Roles(Role.ADMIN)
   @Get()
   async findAll() {
     return this.usersService.findAll()

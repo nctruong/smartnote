@@ -7,10 +7,11 @@ import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { BunkerTankerModule } from './bunker-tanker/bunker-tanker.module';
 import { ReceivingVesselModule } from './receiving-vessel/receiving-vessel.module';
+import {JwtAuthGuard} from "./auth/jwt/jwt.guard";
 
 @Module({
   imports: [UsersModule, PrismaModule, AuthModule, CompanyModule, BunkerTankerModule, ReceivingVesselModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtAuthGuard, AuthModule],
 })
 export class AppModule {}

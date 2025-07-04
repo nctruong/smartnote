@@ -8,15 +8,20 @@ import {
     Delete,
     Put,
     NotFoundException,
-    ParseIntPipe,
+    ParseIntPipe, UseGuards,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import {Company} from "../../generated/prisma";
+import {Roles} from "../auth/jwt/roles.decorator";
+import {RolesGuard} from "../auth/jwt/roles.guard";
+import {Role} from "../auth/jwt/roles.enum";
+import {JwtAuthGuard} from "../auth/jwt/jwt.guard";
 
 @Controller('companies')
 export class CompanyController {
     constructor(private readonly companyService: CompanyService) {}
 
+    @Roles(Role.ADMIN)
     @Get()
     async findAll() {
         return this.companyService.findAll();

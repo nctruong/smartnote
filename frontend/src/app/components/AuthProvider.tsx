@@ -47,12 +47,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     function logoutUser() {
         setUser(null)
+        localStorage.removeItem('token')
         document.cookie = 'token=; Max-Age=0; path=/'
         window.location.href = '/login'
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading }}>
+        <AuthContext.Provider value={{ user, loading, logoutUser }}>
             {children}
         </AuthContext.Provider>
     )

@@ -23,13 +23,15 @@ export default function CompaniesPage() {
 
     const router = useRouter()
 
+    async function fetchCompanies() {
+        const res = await fetch('http://localhost:3001/companies')
+        const data = await res.json()
+        setCompanies(data)
+        setLoading(false)
+    }
+
     useEffect(() => {
-        async function fetchCompanies() {
-            const res = await fetch('http://localhost:3001/companies')
-            const data = await res.json()
-            setCompanies(data)
-            setLoading(false)
-        }
+
         fetchCompanies()
     }, [])
 
@@ -40,7 +42,7 @@ export default function CompaniesPage() {
     const handleDelete = async (id: number) => {
         const res = await axiosClient.delete(`/companies/${id}`)
         if (res.status >= 200 && res.status < 300) {
-            router.push('/admin/companies')
+            fetchCompanies()
         }
     }
 
