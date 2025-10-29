@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axiosClient from '@/lib/axiosClient';
+import {useAuth} from "@/app/components/AuthProvider";
 
 export default function NewReceivingVesselPage() {
+    const { user } = useAuth()
+    const [companies, setCompanies] = useState([])
     const router = useRouter();
 
     const [form, setForm] = useState({
@@ -35,19 +38,40 @@ export default function NewReceivingVesselPage() {
             console.error(error);
         }
     };
-
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            const res = await axiosClient.get(`/companies`)
+            if (res.status >= 200 && res.status < 300) {
+                setCompanies(res.data)
+            }
+        }
+        fetchCompanies()
+    }, [])
     return (
         <div className="p-6 max-w-3xl">
-            <h1 className="text-xl font-semibold mb-6">New Receiving Vessel Company</h1>
+            <h1 className="text-xl font-semibold mb-6">New Receiving Vessel</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Input label="Name" name="name" value={form.name} onChange={handleChange} />
-                <Input label="IMO" name="imo" value={form.imo} onChange={handleChange} />
-                <Input label="Serial No (UEN)" name="serialNo" value={form.serialNo} onChange={handleChange} />
-                <Input label="SB No" name="sbNo" value={form.sbNo} onChange={handleChange} />
-                <Input label="S3 Key" name="s3Key" value={form.s3Key} onChange={handleChange} />
+                <Input label="IMO (optional)" name="imo" value={form.imo} onChange={handleChange} />
+                <Input label="Serial No (UEN) *" name="serialNo" value={form.serialNo} onChange={handleChange} />
+                <Input label="SB No (optional)" name="sbNo" value={form.sbNo} onChange={handleChange} />
                 <Input label="Type" name="type" value={form.type} onChange={handleChange} />
-                <Input label="Company ID" name="companyId" value={form.companyId} onChange={handleChange} />
-                <Input label="User ID" name="userId" value={form.userId} onChange={handleChange} />
+                <div>
+                    <label className="block text-sm font-medium">Company *</label>
+                    <select
+                        name="companyId"
+                        value={user?.companyId}
+                        onChange={handleChange}
+                        required
+                        className="w-full border rounded px-3 py-2"
+                    >
+                        <option value="">Select Company</option>
+                        {companies.map((company) => (
+                            <option value={company.id}>{company.name}</option>
+                        ))}
+                    </select>
+                </div>
+                <Input label="Chief Engineer" name="userId" value={form.userId} onChange={handleChange} />
 
                 <div className="flex gap-4 pt-4">
                     <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded text-sm">
