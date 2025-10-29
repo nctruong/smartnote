@@ -1,6 +1,6 @@
 "use client";
 
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import { DndContext, useDraggable, useDroppable, DragOverlay } from "@dnd-kit/core";
 import { useFormBuilderStore } from "@/app/store/formBuilderStore";
 import {
     User, Phone, Mail, Type, FileText, Calendar, Clock,
@@ -8,24 +8,57 @@ import {
     Table, Volume2, File, Image, Video, Building2, VenetianMask, Layers
 } from "lucide-react";
 import { useState, useEffect } from "react";
-
+const FIELD_TYPES = [
+    { type: "text", label: "Short Text", icon: "📝" },
+    { type: "textarea", label: "Long Text", icon: "📄" },
+    { type: "number", label: "Number", icon: "🔢" },
+    { type: "date", label: "Calendar", icon: "📅" },
+    { type: "time", label: "Time", icon: "⏰" },
+    { type: "radio", label: "Single Option", icon: "🔘" },
+    { type: "checkbox", label: "Check List", icon: "☑️" },
+    { type: "select", label: "Multiple Select", icon: "📋" },
+    { type: "signature", label: "Signature", icon: "✍️" },
+    { type: "file", label: "Document", icon: "📎" },
+    { type: "image", label: "Picture", icon: "🖼️" },
+    { type: "video", label: "Video", icon: "🎥" },
+    { type: "audio", label: "Audio", icon: "🔊" },
+];
 export default function FormBuilderPage() {
-    const { fields, addField } = useFormBuilderStore();
+    // const { fields, addField } = useFormBuilderStore();
     const [activeId, setActiveId] = useState<string | null>(null);
+    const [fields, setFields] = useState([]);
+    const handleDragEnd = (event) => {
+        const { active, over } = event;
 
-    const handleDragEnd = (event: any) => {
-        const { over, active } = event;
-        if (over?.id === "canvas" && active?.id) {
-            const fieldType = active.data?.current?.type || "text";
-            addField({
-                id: `${active.id}-${Date.now()}`,
-                type: fieldType,
-                label: active.id,
-                placeholder: `Enter ${active.id}`,
-            });
+        // Only drop if it's over the canvas
+        if (!over || over.id !== "drop-zone") return;
+
+        // Read custom data from draggable
+        const type = active.data?.current?.type;
+
+        const fieldDef = FIELD_TYPES.find((f) => f.type === type);
+        if (fieldDef) {
+            setFields((prev) => [
+                ...prev,
+                { ...fieldDef, id: `${type}-${Date.now()}` },
+            ]);
         }
+
         setActiveId(null);
     };
+    // const handleDragEnd = (event: any) => {
+    //     const { over, active } = event;
+    //     if (over?.id === "canvas" && active?.id) {
+    //         const fieldType = active.data?.current?.type || "text";
+    //         addField({
+    //             id: `${active.id}-${Date.now()}`,
+    //             type: fieldType,
+    //             label: active.id,
+    //             placeholder: `Enter ${active.id}`,
+    //         });
+    //     }
+    //     setActiveId(null);
+    // };
 
     return (
         <DndContext
@@ -34,7 +67,7 @@ export default function FormBuilderPage() {
         >
             <div className="build-area flex gap-6 p-8 bg-gray-100 min-h-screen text-gray-800">
                 {/* Sidebar */}
-                <div className="draggable-fields w-1/3 bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-8 overflow-y-auto">
+                <div className="draggable-fields w-1/3 bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-8 ">
                     <FieldSection
                         title="Basic Fields"
                         fields={[
@@ -74,30 +107,44 @@ export default function FormBuilderPage() {
                 </div>
 
                 {/* Canvas */}
-                <FormCanvas />
+                {/*<FormCanvas />*/}
 
                 {/* Preview */}
-                <div className="w-1/3 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div className="w-2/3 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <h2 className="text-lg font-semibold mb-4 text-gray-700">Preview</h2>
                     <div className="border border-gray-200 rounded-xl p-5 bg-gray-50">
-                        {fields.length === 0 ? (
-                            <p className="text-gray-400 text-center py-10">
-                                Drag fields here to preview form
-                            </p>
-                        ) : (
-                            <form className="space-y-4">
-                                {fields.map((f, idx) => (
-                                    <PreviewField key={idx} field={f} />
-                                ))}
-                            </form>
-                        )}
+                        <DroppableArea fields={fields} onDrop={setFields} />
                     </div>
                 </div>
             </div>
+            <DragOverlay>
+                {activeId ? (
+                    <div className="flex items-center gap-2 px-3 py-2 border border-indigo-300 bg-indigo-50 rounded-md shadow-md text-indigo-700">
+                        {FIELD_TYPES.find((f) => f.type === activeId)?.icon || "📦"}
+                        <span className="text-sm font-medium">{activeId}</span>
+                    </div>
+                ) : null}
+            </DragOverlay>
         </DndContext>
     );
 }
+function DroppableArea({ fields, onDrop }) {
+    const { setNodeRef } = useDroppable({ id: "drop-zone" });
 
+    return (
+        <div
+            ref={setNodeRef}
+            className="min-h-[300px] border-2 border-dashed border-gray-400 rounded-lg p-4 bg-gray-50"
+        >
+            {fields.length === 0 && (
+                <p className="text-gray-400 text-center">Drag fields here</p>
+            )}
+            {fields.map((f, idx) => (
+                <PreviewField key={idx} field={f} />
+            ))}
+        </div>
+    );
+}
 function FieldSection({ title, fields }: { title: string; fields: any[] }) {
     return (
         <div>
