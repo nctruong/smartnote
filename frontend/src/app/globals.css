@@ -30,15 +30,4 @@ body {
 /*  position: relative;*/
 /*  !*z-index: 1;*!*/
 /*}*/
-.build-area {
-  position: relative !important;
-  z-index: 1;
-}
-.draggable-fields {
-  z-index: 1000;
-}
-.dragging {
-  position: absolute;
-  z-index: 1000; /* higher than canvas */
-  pointer-events: none;
-}
+

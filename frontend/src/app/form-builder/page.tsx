@@ -8,6 +8,7 @@ import {
     Table, Volume2, File, Image, Video, Building2, VenetianMask, Layers
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import EditModal from './editModal'
 const FIELD_TYPES = [
     { type: "text", label: "Short Text", icon: "📝" },
     { type: "textarea", label: "Long Text", icon: "📄" },
@@ -113,7 +114,7 @@ export default function FormBuilderPage() {
                 <div className="w-2/3 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <h2 className="text-lg font-semibold mb-4 text-gray-700">Preview</h2>
                     <div className="border border-gray-200 rounded-xl p-5 bg-gray-50">
-                        <DroppableArea fields={fields} onDrop={setFields} />
+                        <DroppableArea fields={fields} onDrop={setFields} onFieldsChange={setFields} />
                     </div>
                 </div>
             </div>
@@ -128,9 +129,19 @@ export default function FormBuilderPage() {
         </DndContext>
     );
 }
-function DroppableArea({ fields, onDrop }) {
+function DroppableArea({ fields, onDrop, onFieldsChange }) {
     const { setNodeRef } = useDroppable({ id: "drop-zone" });
+    const [editingField, setEditingField] = useState(null);
 
+    const handleSaveField = (updatedField) => {
+        // TODO: Update your fields list here
+        console.log("Updated:", updatedField);
+        setEditingField(null);
+    };
+    const handleDeleteField = (id: string) => {
+        const updated = fields.filter(f => f.id !== id);
+        onFieldsChange(updated); // notify parent to update state
+    };
     return (
         <div
             ref={setNodeRef}
@@ -140,8 +151,16 @@ function DroppableArea({ fields, onDrop }) {
                 <p className="text-gray-400 text-center">Drag fields here</p>
             )}
             {fields.map((f, idx) => (
-                <PreviewField key={idx} field={f} />
+                <PreviewField key={idx} field={f} onEdit={() => setEditingField(f)} onDelete={() => handleDeleteField(f.id)} />
             ))}
+
+            {editingField && (
+                <EditModal
+                    field={editingField}
+                    onSave={handleSaveField}
+                    onClose={() => setEditingField(null)}
+                />
+            )}
         </div>
     );
 }
@@ -230,9 +249,9 @@ function FormCanvas() {
     );
 }
 
-function PreviewField({ field }) {
+function PreviewField({ field, onEdit, onDelete }) {
     const [label, setLabel] = useState(field.label);
-
+    const [hovered, setHovered] = useState(false);
     const renderField = () => {
         switch (field.type) {
             case "text":
@@ -246,7 +265,18 @@ function PreviewField({ field }) {
             case "time":
                 return <input type="time" className="border rounded p-2 w-full" />;
             case "radio":
-                return <input type="radio" />;
+                return (
+                    <div className="space-y-2">
+                        <label className="flex items-center gap-2 border rounded-md p-2">
+                            <input type="radio" name={label} />
+                            <span className="font-medium text-gray-700">Option 1</span>
+                        </label>
+                        <label className="flex items-center gap-2 border rounded-md p-2">
+                            <input type="radio" name={label} />
+                            <span className="font-medium text-gray-700">Option 2</span>
+                        </label>
+                    </div>
+                );
             case "checkbox":
                 return <input type="checkbox" />;
             case "select":
@@ -271,13 +301,45 @@ function PreviewField({ field }) {
     };
 
     return (
-        <div className="border p-3 rounded-md mb-2 bg-white">
-            <input
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-                className="font-semibold mb-1 w-full border-b focus:outline-none"
-            />
-            {renderField()}
+        <div
+            className={`border-2 rounded-md mb-2 bg-white relative transition-all ${
+                hovered ? "border-blue-400 border-dashed" : "border-gray-200"
+            }`}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
+            {/* Header */}
+            <div className="flex justify-between items-center p-2">
+                <input
+                    value={label}
+                    onChange={(e) => setLabel(e.target.value)}
+                    className="font-semibold border-none focus:outline-none w-full"
+                />
+                <div className="cursor-move opacity-70 hover:opacity-100">
+                    ⋮⋮
+                </div>
+            </div>
+
+            {/* Field body */}
+            <div className="px-3 pb-3">{renderField()}</div>
+
+            {/* Hover toolbar */}
+            {hovered && (
+                <div className="flex justify-around items-center border-t border-blue-200 bg-blue-50 py-2 text-blue-600 text-sm rounded-b-md">
+                    <button className="flex items-center gap-1 hover:text-blue-700">
+                        <svg width="16" height="16" fill="currentColor"><path d="M3 3h10v10H3z"/></svg>
+                        Clone
+                    </button>
+                    <button onClick={onEdit} className="flex items-center gap-1 hover:text-blue-700">
+                        <svg width="16" height="16" fill="currentColor"><path d="M2 2h12v12H2z"/></svg>
+                        Edit
+                    </button>
+                    <button onClick={onDelete} className="flex items-center gap-1 hover:text-blue-700">
+                        <svg width="16" height="16" fill="currentColor"><path d="M3 6h10M6 6v6M10 6v6"/></svg>
+                        Delete
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
