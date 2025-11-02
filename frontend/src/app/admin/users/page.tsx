@@ -9,7 +9,7 @@ import axiosClient from "@/lib/axiosClient";
 const users = [
     {
         id: 36,
-        company: 'Hong Lam Receiving Vessel',
+        company: {name: 'Hong Lam Receiving Vessel'},
         email: 'ksan10@yahoo.com',
         role: 'member',
         verified: true,
@@ -81,11 +81,11 @@ export default function AdminUsersPage() {
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 bg-white">
-                        {filteredUsers.map((user) => (
+                        {filteredUsers.map((user: {id: number, email: string, role: string, company: {name: string}, vessel: string, imo: string}) => (
                             <tr key={user.id} className="hover:bg-gray-50">
                                 <td className="p-3"><input type="checkbox" className="accent-blue-500"/></td>
                                 <td className="p-3 font-medium text-blue-600">{user.id}</td>
-                                <td className="p-3 text-blue-600">{user.company.name}</td>
+                                <td className="p-3 text-blue-600">{user.company?.name}</td>
                                 <td className="p-3">{user.email}</td>
                                 <td className="p-3">{user.role}</td>
                                 <td className="p-3">
@@ -94,7 +94,7 @@ export default function AdminUsersPage() {
           </span>
                                 </td>
                                 <td className="p-3 text-gray-700">
-                                    {user.bunkerTankers?.map((bunker: BunkerTanker) => bunker.name).join(', ')}
+                                    {/*{user.bunkerTankers?.map((bunker: BunkerTanker) => bunker.name).join(', ')}*/}
                                 </td>
                                 <td className="p-3">{user.vessel}</td>
                                 <td className="p-3">{user.imo}</td>

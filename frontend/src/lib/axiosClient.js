@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {getTokenFromCookie} from "@/lib/auth";
+import {getTokenFromCookie} from "./auth";
 
 const token = getTokenFromCookie()
 const axiosClient = axios.create({

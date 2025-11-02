@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation';
 import axiosClient from "@/lib/axiosClient";
 
 type Company = {
@@ -10,31 +10,38 @@ type Company = {
     name: string;
 };
 
-export default function EditCompany({ params }: { params: { id: string } }) {
+export default function EditCompany() {
     const { register, handleSubmit, reset } = useForm<Company>();
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const { id } = useParams()
+    const params = useParams();
+    const id = params?.id as string;
 
     useEffect(() => {
-        const fetch = async () => {
-            const res = await axiosClient.get(`/companies/${id}`)
-            reset(res.data);
-            setLoading(false);
-        }
-        fetch()
-    }, [params.id, reset]);
+        if (!id) return;
+        const fetchCompany = async () => {
+            try {
+                const res = await axiosClient.get(`/companies/${id}`);
+                reset(res.data);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCompany();
+    }, [id, reset]);
 
     const onSubmit = async (data: Company) => {
-        const { name } = data
-        const res = await axiosClient.put(`/companies/${id}`, {
-            name
-        });
-
-        if (res.status >= 200 && res.status < 300) {
-            router.push('/admin/companies'); // Redirect to company list
-        } else {
-            alert(`Failed to update company: ${JSON.stringify(res)}`);
+        try {
+            const res = await axiosClient.put(`/companies/${id}`, { name: data.name });
+            if (res.status >= 200 && res.status < 300) {
+                router.push('/admin/companies');
+            } else {
+                alert(`Failed to update company: ${JSON.stringify(res)}`);
+            }
+        } catch (error) {
+            alert(`Error: ${error}`);
         }
     };
 

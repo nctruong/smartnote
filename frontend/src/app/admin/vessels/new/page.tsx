@@ -66,7 +66,7 @@ export default function NewReceivingVesselPage() {
                         className="w-full border rounded px-3 py-2"
                     >
                         <option value="">Select Company</option>
-                        {companies.map((company) => (
+                        {companies.map((company: {id:number, name:string}) => (
                             <option value={company.id}>{company.name}</option>
                         ))}
                     </select>

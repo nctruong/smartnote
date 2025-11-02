@@ -27,17 +27,25 @@ export default function NewUserPage() {
     }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type, checked } = e.target
-        let val: string | boolean = type === 'checkbox' ? checked : value;
-        if (name === 'role') {
-            val = value.toUpperCase(); // force MEMBER or ADMIN
+        const { name, value, type } = e.target;
+
+        let val: string | boolean;
+
+        if (type === 'checkbox' && e.target instanceof HTMLInputElement) {
+            val = e.target.checked;
+        } else {
+            val = value;
+        }
+
+        if (name === 'role' && typeof val === 'string') {
+            val = val.toUpperCase(); // ensure MEMBER or ADMIN
         }
 
         setForm((prev) => ({
             ...prev,
             [name]: val,
-        }))
-    }
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -77,8 +85,8 @@ export default function NewUserPage() {
                         className="w-full border rounded px-3 py-2"
                     >
                         <option value="">Select Company</option>
-                        {companies.map((company) => (
-                            <option value={company.id}>{company.name}</option>
+                        {companies.map((company: {id: number, name: string}) => (
+                            <option value={company?.id}>{company?.name}</option>
                         ))}
                     </select>
                 </div>

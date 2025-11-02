@@ -7,6 +7,8 @@ import {
     ListChecks, List, CheckSquare, MapPin, Signature, Hash,
     Table, Volume2, File, Image, Video, Building2, VenetianMask, Layers
 } from "lucide-react";
+import { QrCode, Save, Play } from "lucide-react";
+
 import { useState, useEffect } from "react";
 import EditModal from './editModal'
 const FIELD_TYPES = [
@@ -24,11 +26,18 @@ const FIELD_TYPES = [
     { type: "video", label: "Video", icon: "🎥" },
     { type: "audio", label: "Audio", icon: "🔊" },
 ];
+interface Field {
+    id: string;
+    type?: string;
+    label?: string;
+    icon?: string;
+    [key: string]: any;
+}
 export default function FormBuilderPage() {
     // const { fields, addField } = useFormBuilderStore();
-    const [activeId, setActiveId] = useState<string | null>(null);
-    const [fields, setFields] = useState([]);
-    const handleDragEnd = (event) => {
+    const [activeId, setActiveId] = useState<string | null | number>(null);
+    const [fields, setFields] = useState<Field[]>([]);
+    const handleDragEnd = (event: any) => {
         const { active, over } = event;
 
         // Only drop if it's over the canvas
@@ -39,10 +48,7 @@ export default function FormBuilderPage() {
 
         const fieldDef = FIELD_TYPES.find((f) => f.type === type);
         if (fieldDef) {
-            setFields((prev) => [
-                ...prev,
-                { ...fieldDef, id: `${type}-${Date.now()}` },
-            ]);
+            setFields((prev) => [...prev, { ...fieldDef, id: `${type}-${Date.now()}` }]);
         }
 
         setActiveId(null);
@@ -72,39 +78,62 @@ export default function FormBuilderPage() {
                     <FieldSection
                         title="Basic Fields"
                         fields={[
-                            { id: "Name", type: "text", icon: <User size={16} /> },
-                            { id: "Address", type: "textarea", icon: <Building2 size={16} /> },
-                            { id: "Mobile Number", type: "number", icon: <Phone size={16} /> },
-                            { id: "Gender", type: "select", icon: <VenetianMask size={16} /> },
-                            { id: "Email Address", type: "email", icon: <Mail size={16} /> },
-                            { id: "Title", type: "text", icon: <Type size={16} /> },
-                            { id: "Description", type: "textarea", icon: <FileText size={16} /> },
-                            { id: "Calendar", type: "date", icon: <Calendar size={16} /> },
-                            { id: "Time", type: "time", icon: <Clock size={16} /> },
+                            { id: "Name", type: "text", icon: <User size={18} strokeWidth={3} /> },
+                            { id: "Address", type: "textarea", icon: <Building2 size={18} strokeWidth={3} /> },
+                            { id: "Mobile Number", type: "number", icon: <Phone size={18} strokeWidth={3} /> },
+                            { id: "Gender", type: "select", icon: <VenetianMask size={18} strokeWidth={3} /> },
+                            { id: "Email Address", type: "email", icon: <Mail size={18} strokeWidth={3} /> },
+                            { id: "Title", type: "text", icon: <Type size={18} strokeWidth={3} /> },
+                            { id: "Description", type: "textarea", icon: <FileText size={18} strokeWidth={3} /> },
+                            { id: "Calendar", type: "date", icon: <Calendar size={18} strokeWidth={3} /> },
+                            { id: "Time", type: "time", icon: <Clock size={18}  strokeWidth={3} /> },
                         ]}
                     />
                     <FieldSection
                         title="General Fields"
                         fields={[
-                            { id: "Single Option", type: "radio", icon: <List size={16} /> },
-                            { id: "Multiple Option", type: "select", icon: <CheckSquare size={16} /> },
-                            { id: "Multiple-level Select", type: "select", icon: <Layers size={16} /> },
-                            { id: "Check List", type: "checkbox", icon: <ListChecks size={16} /> },
-                            { id: "Location", type: "map", icon: <MapPin size={16} /> },
-                            { id: "Signature", type: "signature", icon: <Signature size={16} /> },
-                            { id: "Number", type: "number", icon: <Hash size={16} /> },
-                            { id: "Sheet", type: "table", icon: <Table size={16} /> },
+                            { id: "Single Option", type: "radio", icon: <List size={18} strokeWidth={3}/> },
+                            { id: "Multiple Option", type: "select", icon: <CheckSquare size={18} strokeWidth={3}/> },
+                            { id: "Multiple-level Select", type: "select", icon: <Layers size={18} strokeWidth={3}/> },
+                            { id: "Check List", type: "checkbox", icon: <ListChecks size={18} strokeWidth={3}/> },
+                            { id: "Location", type: "map", icon: <MapPin size={18} strokeWidth={3}/> },
+                            { id: "Signature", type: "signature", icon: <Signature size={18} strokeWidth={3}/> },
+                            { id: "Number", type: "number", icon: <Hash size={18} strokeWidth={3}/> },
+                            { id: "Sheet", type: "table", icon: <Table size={18} strokeWidth={3}/> },
                         ]}
                     />
                     <FieldSection
                         title="Multimedia Fields"
                         fields={[
-                            { id: "Audio", type: "audio", icon: <Volume2 size={16} /> },
-                            { id: "Document", type: "file", icon: <File size={16} /> },
-                            { id: "Picture", type: "image", icon: <Image size={16} /> },
-                            { id: "Video", type: "video", icon: <Video size={16} /> },
+                            { id: "Audio", type: "audio", icon: <Volume2 size={18} strokeWidth={3}/> },
+                            { id: "Document", type: "file", icon: <File size={18} strokeWidth={3}/> },
+                            { id: "Picture", type: "image", icon: <Image size={18} strokeWidth={3}/> },
+                            { id: "Video", type: "video", icon: <Video size={18} strokeWidth={3}/> },
                         ]}
                     />
+
+                    <hr/>
+                    <div className="flex flex-col items-start gap-3 w-full max-w-sm">
+                        {/* Generate QR Code button */}
+                        <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold text-lg py-3 px-4 rounded-lg flex items-center justify-center gap-2 shadow-sm">
+                            <QrCode size={20} className="text-white" />
+                            Generate QR Code
+                        </button>
+
+                        {/* Create Form + How it works */}
+                        <div className="flex items-center justify-between w-full bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 shadow-sm">
+                            <div className="flex items-center gap-2 text-gray-800 font-medium text-base">
+                                <Save size={20} className="text-gray-700" />
+                                Create Form
+                            </div>
+                            <a
+                                href="#"
+                                className="flex items-center gap-1 text-blue-600 font-medium hover:text-blue-700"
+                            >
+                                How it works <Play size={18} />
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Canvas */}
@@ -129,19 +158,27 @@ export default function FormBuilderPage() {
         </DndContext>
     );
 }
-function DroppableArea({ fields, onDrop, onFieldsChange }) {
-    const { setNodeRef } = useDroppable({ id: "drop-zone" });
-    const [editingField, setEditingField] = useState(null);
+interface DroppableAreaProps {
+    fields: Field[];
+    onDrop?: (field: Field[]) => void;
+    onFieldsChange: (updatedFields: Field[]) => void;
+}
 
-    const handleSaveField = (updatedField) => {
-        // TODO: Update your fields list here
-        console.log("Updated:", updatedField);
+function DroppableArea({ fields, onDrop, onFieldsChange }: DroppableAreaProps) {
+    const { setNodeRef } = useDroppable({ id: "drop-zone" });
+    const [editingField, setEditingField] = useState<Field | null>(null);
+
+    const handleSaveField = (field: Field) => {
+        const updated = fields.map((f) => (f.id === field.id ? field : f));
+        onFieldsChange(updated);
         setEditingField(null);
     };
+
     const handleDeleteField = (id: string) => {
-        const updated = fields.filter(f => f.id !== id);
-        onFieldsChange(updated); // notify parent to update state
+        const updated = fields.filter((f) => f.id !== id);
+        onFieldsChange(updated);
     };
+
     return (
         <div
             ref={setNodeRef}
@@ -150,8 +187,14 @@ function DroppableArea({ fields, onDrop, onFieldsChange }) {
             {fields.length === 0 && (
                 <p className="text-gray-400 text-center">Drag fields here</p>
             )}
-            {fields.map((f, idx) => (
-                <PreviewField key={idx} field={f} onEdit={() => setEditingField(f)} onDelete={() => handleDeleteField(f.id)} />
+
+            {fields.map((f) => (
+                <PreviewField
+                    key={f.id}
+                    field={f}
+                    onEdit={() => setEditingField(f)}
+                    onDelete={() => handleDeleteField(f.id)}
+                />
             ))}
 
             {editingField && (
@@ -209,9 +252,9 @@ function DraggableField({ id, icon, type = "text" }: { id: string; icon: React.R
             {...attributes}
             data-id={id}
             style={style}
-            className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-sm font-medium cursor-grab hover:bg-indigo-50 hover:border-indigo-400 transition-colors draggable-field"
+            className="flex items-center gap-2 text-lg w-full bg-gray-100 py-[10px] px-3 text-left text-slate-600 flex items-center cursor-pointer hover:bg-gray-200 hover:scale-[1.03] hover:shadow-md rounded-md"
         >
-            {icon}
+            <div className="self-center w-5 h-5 mr-3 flex-shrink-0">{icon}</div>
             <span>{id}</span>
         </div>
     );
@@ -248,30 +291,34 @@ function FormCanvas() {
         </div>
     );
 }
-
-function PreviewField({ field, onEdit, onDelete }) {
+interface PreviewFieldProps {
+    field: Field;
+    onEdit: (field: Field) => void;
+    onDelete: (id: string) => void;
+}
+function PreviewField({ field, onEdit, onDelete }: PreviewFieldProps) {
     const [label, setLabel] = useState(field.label);
     const [hovered, setHovered] = useState(false);
     const renderField = () => {
         switch (field.type) {
             case "text":
-                return <input placeholder={label} className="border rounded p-2 w-full" />;
+                return <input placeholder={label} className="border border-gray-300 rounded p-2 w-full" />;
             case "textarea":
-                return <textarea placeholder={label} className="border rounded p-2 w-full" />;
+                return <textarea placeholder={label} className="border border-gray-300 rounded p-2 w-full" />;
             case "number":
-                return <input type="number" placeholder={label} className="border rounded p-2 w-full" />;
+                return <input type="number" placeholder={label} className="border border-gray-300 rounded p-2 w-full" />;
             case "date":
-                return <input type="date" className="border rounded p-2 w-full" />;
+                return <input type="date" className="border border-gray-300 rounded p-2 w-full" />;
             case "time":
-                return <input type="time" className="border rounded p-2 w-full" />;
+                return <input type="time" className="border border-gray-300 rounded p-2 w-full" />;
             case "radio":
                 return (
                     <div className="space-y-2">
-                        <label className="flex items-center gap-2 border rounded-md p-2">
+                        <label className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
                             <input type="radio" name={label} />
                             <span className="font-medium text-gray-700">Option 1</span>
                         </label>
-                        <label className="flex items-center gap-2 border rounded-md p-2">
+                        <label className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
                             <input type="radio" name={label} />
                             <span className="font-medium text-gray-700">Option 2</span>
                         </label>
@@ -281,20 +328,20 @@ function PreviewField({ field, onEdit, onDelete }) {
                 return <input type="checkbox" />;
             case "select":
                 return (
-                    <select className="border rounded p-2 w-full">
+                    <select className="border border-gray-300 rounded p-2 w-full">
                         <option>{label}</option>
                     </select>
                 );
             case "signature":
-                return <div className="border rounded p-4 text-gray-400 text-center">Signature Pad</div>;
+                return <div className="border border-gray-300 rounded p-4 text-gray-400 text-center">Signature Pad</div>;
             case "file":
-                return <input type="file" className="border rounded p-2 w-full" />;
+                return <input type="file" className="border border-gray-300 rounded p-2 w-full" />;
             case "image":
-                return <input type="file" accept="image/*" className="border rounded p-2 w-full" />;
+                return <input type="file" accept="image/*" className="border border-gray-300 rounded p-2 w-full" />;
             case "video":
-                return <input type="file" accept="video/*" className="border rounded p-2 w-full" />;
+                return <input type="file" accept="video/*" className="border border-gray-300 rounded p-2 w-full" />;
             case "audio":
-                return <input type="file" accept="audio/*" className="border rounded p-2 w-full" />;
+                return <input type="file" accept="audio/*" className="border border-gray-300 rounded p-2 w-full" />;
             default:
                 return null;
         }
@@ -330,11 +377,15 @@ function PreviewField({ field, onEdit, onDelete }) {
                         <svg width="16" height="16" fill="currentColor"><path d="M3 3h10v10H3z"/></svg>
                         Clone
                     </button>
-                    <button onClick={onEdit} className="flex items-center gap-1 hover:text-blue-700">
+                    <button onClick={(e) => {onEdit}} className="flex items-center gap-1 hover:text-blue-700">
                         <svg width="16" height="16" fill="currentColor"><path d="M2 2h12v12H2z"/></svg>
                         Edit
                     </button>
-                    <button onClick={onDelete} className="flex items-center gap-1 hover:text-blue-700">
+                    <button onClick={(e) => {
+                        if (field.id !== undefined) { 
+                            onDelete(field.id) 
+                        }
+                    }} className="flex items-center gap-1 hover:text-blue-700">
                         <svg width="16" height="16" fill="currentColor"><path d="M3 6h10M6 6v6M10 6v6"/></svg>
                         Delete
                     </button>
@@ -344,15 +395,3 @@ function PreviewField({ field, onEdit, onDelete }) {
     );
 }
 
-/* ✅ Add this CSS to globals.css or tailwind.css */
-`
-.dragging {
-  position: absolute !important;
-  z-index: 9999 !important;
-  pointer-events: none;
-  opacity: 0.8;
-}
-.draggable-field {
-  transition: all 0.15s ease-in-out;
-}
-`

@@ -24,7 +24,8 @@ export default function EditUserPage() {
     const [loading, setLoading] = useState(true)
     const [form, setForm] = useState({
         email: '',
-        role: 'MEMBER'
+        role: 'MEMBER',
+        active: false
     })
 
     // Fetch user by ID
@@ -41,17 +42,23 @@ export default function EditUserPage() {
     useEffect(() => {
         setForm({
             email: user.email,
-            role: user.role
+            role: user.role,
+            active: true
         })
     }, [user])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type, checked } = e.target
+        const { name, value, type } = e.target;
+        const newValue =
+            type === 'checkbox' && e.target instanceof HTMLInputElement
+                ? e.target.checked
+                : value;
+
         setForm((prev) => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-        }))
-    }
+            [name]: newValue,
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()

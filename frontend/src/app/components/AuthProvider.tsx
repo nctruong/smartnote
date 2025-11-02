@@ -6,6 +6,7 @@ import { getTokenFromCookie, getUserFromToken } from '@/lib/auth'
 type User = {
     email: string
     id: number
+    companyId: number
 }
 
 type AuthContextType = {
