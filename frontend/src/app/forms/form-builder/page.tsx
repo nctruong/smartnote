@@ -53,19 +53,6 @@ export default function FormBuilderPage() {
 
         setActiveId(null);
     };
-    // const handleDragEnd = (event: any) => {
-    //     const { over, active } = event;
-    //     if (over?.id === "canvas" && active?.id) {
-    //         const fieldType = active.data?.current?.type || "text";
-    //         addField({
-    //             id: `${active.id}-${Date.now()}`,
-    //             type: fieldType,
-    //             label: active.id,
-    //             placeholder: `Enter ${active.id}`,
-    //         });
-    //     }
-    //     setActiveId(null);
-    // };
 
     return (
         <DndContext
@@ -179,10 +166,12 @@ function DroppableArea({ fields, onDrop, onFieldsChange }: DroppableAreaProps) {
         onFieldsChange(updated);
     };
 
+    const test = () => { alert('hello')}
+
     return (
         <div
             ref={setNodeRef}
-            className="min-h-[300px] border-2 border-dashed border-gray-400 rounded-lg p-4 bg-gray-50"
+            className="min-h-[900px] border-2 border-dashed border-gray-400 rounded-lg p-4 bg-gray-50"
         >
             {fields.length === 0 && (
                 <p className="text-gray-400 text-center">Drag fields here</p>
@@ -219,7 +208,6 @@ function FieldSection({ title, fields }: { title: string; fields: any[] }) {
         </div>
     );
 }
-
 function DraggableField({ id, icon, type = "text" }: { id: string; icon: React.ReactNode; type?: string }) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id,
@@ -229,21 +217,6 @@ function DraggableField({ id, icon, type = "text" }: { id: string; icon: React.R
     const style = transform
         ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
         : undefined;
-
-    // ✅ add .dragging class manually
-    // useEffect(() => {
-    //     const el = document.querySelector(`[data-id="${id}"]`);
-    //     if (!el) return;
-    //
-    //     const handleDragStart = () => el.classList.add("dragging");
-    //     const handleDragEnd = () => { el.classList.remove("dragging"); alert('up')}
-    //     el.addEventListener("mousedown", handleDragStart);
-    //     el.addEventListener("mouseup", handleDragEnd);
-    //     return () => {
-    //         el.removeEventListener("mousedown", handleDragStart);
-    //         el.removeEventListener("mouseup", handleDragEnd);
-    //     };
-    // }, [id]);
 
     return (
         <div
@@ -259,44 +232,13 @@ function DraggableField({ id, icon, type = "text" }: { id: string; icon: React.R
         </div>
     );
 }
-
-function FormCanvas() {
-    const { fields } = useFormBuilderStore();
-    const { setNodeRef } = useDroppable({ id: "canvas" });
-
-    return (
-        <div
-            ref={setNodeRef}
-            className="form-canvas flex-1 bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col relative z-0"
-        >
-            <h2 className="text-lg font-semibold mb-4 text-gray-700">Form Canvas</h2>
-            <div className="flex-1 border border-dashed border-gray-300 rounded-xl p-6 bg-gray-50">
-                {fields.length === 0 ? (
-                    <p className="text-gray-400 text-center mt-12">
-                        Drag fields from left to start building
-                    </p>
-                ) : (
-                    <ul className="space-y-2">
-                        {fields.map((f) => (
-                            <li
-                                key={f.id}
-                                className="px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700 text-sm"
-                            >
-                                {f.label}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
-        </div>
-    );
-}
 interface PreviewFieldProps {
+    key: string;
     field: Field;
     onEdit: (field: Field) => void;
     onDelete: (id: string) => void;
 }
-function PreviewField({ field, onEdit, onDelete }: PreviewFieldProps) {
+function PreviewField({ key, field, onEdit, onDelete }: PreviewFieldProps) {
     const [label, setLabel] = useState(field.label);
     const [hovered, setHovered] = useState(false);
     const renderField = () => {
@@ -377,7 +319,7 @@ function PreviewField({ field, onEdit, onDelete }: PreviewFieldProps) {
                         <svg width="16" height="16" fill="currentColor"><path d="M3 3h10v10H3z"/></svg>
                         Clone
                     </button>
-                    <button onClick={(e) => {onEdit}} className="flex items-center gap-1 hover:text-blue-700">
+                    <button onClick={(e) => {onEdit(field)}} className="flex items-center gap-1 hover:text-blue-700">
                         <svg width="16" height="16" fill="currentColor"><path d="M2 2h12v12H2z"/></svg>
                         Edit
                     </button>

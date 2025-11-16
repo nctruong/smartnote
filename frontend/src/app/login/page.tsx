@@ -5,8 +5,8 @@ import {login} from '@/lib/auth'
 import {useRouter} from 'next/navigation'
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('admin@example.com')
+    const [password, setPassword] = useState('Admin123@')
     const [message, setMessage] = useState('')
     const router = useRouter()
 

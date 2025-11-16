@@ -54,14 +54,14 @@ const EditModal: React.FC<EditModalProps> = ({ field, onSave, onClose }) => {
 
                 <div className="mb-4">
                     <div className="font-medium mb-1">Options</div>
-                    {localField && localField.options.map((opt: any, i: any) => (
-                        <input
-                            key={i}
-                            value={opt.label}
-                            onChange={(e) => updateOption(i, e.target.value)}
-                            className="w-full border rounded-lg p-2 mb-2"
-                        />
-                    ))}
+                    {/*{localField && localField.options.map((opt: any, i: any) => (*/}
+                    {/*    <input*/}
+                    {/*        key={i}*/}
+                    {/*        value={opt.label}*/}
+                    {/*        onChange={(e) => updateOption(i, e.target.value)}*/}
+                    {/*        className="w-full border rounded-lg p-2 mb-2"*/}
+                    {/*    />*/}
+                    {/*))}*/}
 
                     <button
                         type="button"

@@ -14,7 +14,7 @@ const config = {
 };
 
 const localBuildPath = `${__dirname}/.next`;
-const remoteDeployPath = "/var/www/skillbuilder/.next";
+const remoteDeployPath = "/var/www/form-qr/.next";
 
 function getTotalFiles(dir) {
   let totalFiles = 0;
